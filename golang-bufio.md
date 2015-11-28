@@ -252,11 +252,11 @@ index4, buf, e4 := bufio.ScanLines([]byte("hi,golang\nit's wonderful"), false)
 fmt.Println(index4, string(buf), e4)
 ```
 
-输出：
-1 h <nil>
-3 你 <nil>
-5 it's <nil>
-10 hi,golang <nil> 
+输出：  
+1 h <nil>  
+3 你 <nil>  
+5 it's <nil>  
+10 hi,golang <nil>   
 
 Scanner使用
 
@@ -335,6 +335,50 @@ func main() {
 
 }
 ```
+
+ReaderWriter的使用
+
+```
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"os"
+	"strings"
+)
+
+func main() {
+	rw := bufio.NewReadWriter(
+		bufio.NewReader(strings.NewReader("i'm studying golang!\n i feel good\ngolang is amazing")),
+		bufio.NewWriter(os.Stdout))
+	// 逐行读取
+	for {
+		line, err := rw.ReadString('\n')
+		fmt.Println(line)
+		if err != nil {
+			if err == io.EOF {
+				break
+			} else {
+				panic(err)
+			}
+		}
+	}
+	buf := make([]byte, 0, 64)
+	n, e := rw.Read(buf)
+	if n <= 0 && e != nil {
+		panic(e)
+	}
+	rw.Write(buf)
+	rw.Flush()
+	rw.WriteString("hi golang")
+	rw.WriteTo(rw)
+	rw.Flush()
+	fmt.Println(rw.ReadString('\n'))
+}
+```
+
 
 
 
